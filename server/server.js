@@ -25,7 +25,7 @@ db.on("disconnected", () => console.log("mongo disconnected"));
 // middleware
 app.use(express.json()); //use .json(), not .urlencoded()
 app.use(express.urlencoded({ extended: false }));
-app.use(express.static("public"));
+app.use(express.static("../client/dist"));
 app.use(cookieParser());
 app.use("/holidays", holidaysController);
 
