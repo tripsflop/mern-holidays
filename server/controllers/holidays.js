@@ -1,5 +1,6 @@
 const express = require("express");
 const holidays = express.Router();
+const { faker } = require("@faker-js/faker");
 const Holiday = require("../models/holidays.js");
 
 holidays.post("/", async (req, res) => {
@@ -11,10 +12,29 @@ holidays.post("/", async (req, res) => {
   }
 });
 
+holidays.get("/seed", async (req, res) => {
+  const holidays = Array(5)
+    .fill(0)
+    .map(() => ({
+      name: faker.hacker.noun(),
+      celebrated: faker.datatype.boolean(),
+      description: "Best holiday ever!",
+      likes: faker.datatype.number(100),
+      tags: [],
+    }));
+  try {
+    //await Holiday.deleteMany({}); //* delete all holidays
+    const newHolidays = await Holiday.create(holidays);
+    res.json(newHolidays);
+  } catch (error) {
+    res.status(500).json(error);
+  }
+});
+
 holidays.get("/", async (req, res) => {
   try {
-    const foundHolidays = await Holiday.create({});
-    res.status(200).send(foundHolidays);
+    const foundHolidays = await Holiday.find().exec();
+    res.status(200).json(foundHolidays);
   } catch (error) {
     res.status(400).json({ error: error.message });
   }
