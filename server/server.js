@@ -29,7 +29,7 @@ app.use(express.json()); //use .json(), not .urlencoded()
 app.use(morgan("dev"));
 app.use(express.static("../client/dist"));
 app.use(cookieParser());
-app.use("/holidays", holidaysController);
+app.use("/api/holidays", holidaysController);
 
 // app.set("trust proxy", 1); // trust first proxy
 // app.use(
