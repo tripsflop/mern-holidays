@@ -40,6 +40,16 @@ holidays.get("/", async (req, res) => {
   }
 });
 
+holidays.get("/:id", async (req, res) => {
+  const { id } = req.params;
+  try {
+    const holiday = await Holiday.findById(id);
+    res.json(holiday);
+  } catch (error) {
+    res.status(500).json({ error });
+  }
+});
+
 holidays.delete("/:id", async (req, res) => {
   try {
     const deletedHoliday = await Holiday.findByIdAndRemove(req.params.id);

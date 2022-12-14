@@ -45,7 +45,7 @@ function HolidaysTable() {
             <td>{holiday.likes}</td>
             <td>
               <Link to="/">🎈</Link>
-              <Link to="/">📝</Link>
+              <Link to={`/holidays/${holiday._id}`}>📝</Link>
               <button onClick={() => handleDelete(holiday._id)}>X</button>
             </td>
           </tr>
