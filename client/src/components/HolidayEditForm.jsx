@@ -1,17 +1,27 @@
 import React from "react";
 import { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import Navbar from "./Navbar";
 
-function HolidaysEditForm() {
+function HolidaysEditForm({ notLoggedIn }) {
   const { id } = useParams();
   const [holiday, setHoliday] = useState({});
+  const navigate = useNavigate();
 
   const handleSubmit = async (event) => {
     event.preventDefault();
 
     const formData = new FormData(event.target);
     const info = Object.fromEntries(formData);
+
+    console.log("formInfo %o", info);
+    if (info.celebrated === "on") {
+      info.celebrated = true;
+    } else {
+      info.celebrated = false;
+    }
+
+    console.log("after %o", info);
 
     // log("formInfo %o", formInfo);
     const response = await fetch(`/api/holidays/${id}`, {
@@ -20,10 +30,19 @@ function HolidaysEditForm() {
         "Content-Type": "application/json",
       },
       body: JSON.stringify(info),
-    });
-    const data = await response.json();
-    console.log(data);
+    })
+      .then((response) => response.json)
+      .then((data) => {
+        console.log(data);
+        navigate("/holidays");
+      });
   };
+
+  useEffect(() => {
+    if (notLoggedIn) {
+      navigate("/");
+    }
+  }, [navigate, notLoggedIn]);
 
   useEffect(() => {
     const fetchHoliday = async () => {
@@ -37,15 +56,19 @@ function HolidaysEditForm() {
   return (
     <React.Fragment>
       <Navbar />
-      <fieldset>
-        <form onSubmit={handleSubmit}>
+      <form onSubmit={handleSubmit}>
+        <fieldset>
           <legend>Make your own Holiday!</legend>
           <label>
             Name:<input name="name" defaultValue={holiday.name}></input>
           </label>
           <label>
             Celebrated:
-            <input name="celebrated" defaultValue={holiday.celebrated}></input>
+            <input
+              name="celebrated"
+              type="checkbox"
+              defaultChecked={holiday.celebrated}
+            ></input>
           </label>
           <label>
             Likes:<input name="likes" defaultValue={holiday.likes}></input>
@@ -57,10 +80,10 @@ function HolidaysEditForm() {
               defaultValue={holiday.description}
             ></input>
           </label>
-        </form>
-      </fieldset>
-      <button>Update</button>
-      <button>Reset</button>
+        </fieldset>
+        <button>Update</button>
+        <button type="reset">Reset</button>
+      </form>
     </React.Fragment>
   );
 }
